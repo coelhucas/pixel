@@ -26,5 +26,6 @@ Press download to download your pixel art as png
 - [x] Add reset button
 - [x] Make it possible to download it in other scales
 - [ ] 1x previewer (I can use the virtual canvas)
+- [ ] Bucket [reference](http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/)
 
 *Maybe other sizes layer?
