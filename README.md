@@ -24,7 +24,7 @@ Press download to download your pixel art as png
 - [ ] Make it responsive
 - [ ] Add eraser
 - [x] Add reset button
-- [ ] Make it possible to download it as 1x[^1]
-- [ ] 1x previewer[^1]
+- [ ] Make it possible to download it as 1x*
+- [ ] 1x previewer*
 
-[ˆ1]: Maybe other sizes later?
+*Maybe other sizes layer?
