@@ -71,9 +71,9 @@ function setCustomExportScale() {
   virtualCanvas.width = canvasSize * customScale;
   virtualCanvas.height = canvasSize * customScale;
 
-  for (let x = 0; x < scale; i++) {
-    for (let y = 0; y < scale; j++) {
-      const [r, g, b, a] = ctx.getImageData(i * zoom, j * zoom, 1, 1).data;
+  for (let x = 0; x < scale; x++) {
+    for (let y = 0; y < scale; y++) {
+      const [r, g, b, a] = ctx.getImageData(x * zoom, y * zoom, 1, 1).data;
 
       virtualContext.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
       virtualContext.fillRect(x * customScale, y * customScale, customScale, customScale); 
