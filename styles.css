@@ -4,6 +4,11 @@ section {
   max-width: 512px;
 }
 
+button {
+  margin-bottom: 8px;
+  height: 48px;
+}
+
 a {
   margin-top: 24px;
   width: 100%;

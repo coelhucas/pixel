@@ -2,6 +2,7 @@ const tile_size = 8;
 const zoom = 64;
 const canvas = document.getElementById('canvas');
 const downloadButton = document.getElementById('download');
+const resetButton = document.getElementById('reset');
 const ctx = canvas.getContext('2d');
 
 let isDrawing = false;
@@ -47,3 +48,8 @@ canvas.addEventListener('mouseup', () => {
 
 canvas.addEventListener('click', draw);
 canvas.addEventListener('mousemove', (e) => draw(e, true));
+
+resetButton.addEventListener('click', () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  downloadButton.href = canvas.toDataURL('image/png');
+});

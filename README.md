@@ -23,7 +23,7 @@ Press download to download your pixel art as png
 - [ ] Add a small default palette
 - [ ] Make it responsive
 - [ ] Add eraser
-- [ ] Add reset button
+- [x] Add reset button
 - [ ] Make it possible to download it as 1x[^1]
 - [ ] 1x previewer[^1]
 
