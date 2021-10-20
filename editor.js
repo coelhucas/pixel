@@ -60,7 +60,9 @@ scaleSelector.addEventListener('change', (e) => {
  * It will generate a virtual canvas to update download image size. Works for any scale.
  * This will use 'customScale' value as reference.
  * 
- * TODO(?): Maybe receive it as a parameter instead of using customScale?
+ * Won't use [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas) due to lack of support.
+ * 
+ * **TODO(?):** Maybe receive it as a parameter instead of using customScale?
  */
 function setCustomExportScale() {
   const virtualCanvas = document.createElement('canvas');
