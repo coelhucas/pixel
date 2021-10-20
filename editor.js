@@ -1,19 +1,17 @@
-const tile_size = 8;
+const canvasSize = 8;
+const scale = 8;
 const zoom = 64;
 const canvas = document.getElementById('canvas');
 const downloadButton = document.getElementById('download');
 const resetButton = document.getElementById('reset');
+const scaleSelector = document.getElementById('scale-select');
 const ctx = canvas.getContext('2d');
 
 let isDrawing = false;
+let customScale = scale;
 
-ctx.imageSmoothingEnabled = false;
-  ctx.mozImageSmoothingEnabled = false;
-  ctx.webkitImageSmoothingEnabled = false;
-  ctx.msImageSmoothingEnabled = false;
-
-
-ctx.scale(8, 8);
+ctx.scale(scale, scale);
+setCustomExportScale();
 
 /**
  * Draw a pixel onto canvas
@@ -26,15 +24,14 @@ function draw(e, requiresHold = false) {
   return;
   }
   const rect = canvas.getBoundingClientRect();
-  // console.log(e.clientX - rect.left);
   const [x, y] = [
     Math.floor((e.clientX - rect.left) / zoom),
     Math.floor((e.clientY - rect.top) / zoom),
   ];
 
   ctx.fillStyle = '#000';
-  ctx.fillRect(x * tile_size, y * tile_size, tile_size, tile_size);
-  downloadButton.href = canvas.toDataURL('image/png');
+  ctx.fillRect(x * scale, y * scale, scale, scale);
+  setCustomExportScale();
 
 }
 
@@ -51,5 +48,35 @@ canvas.addEventListener('mousemove', (e) => draw(e, true));
 
 resetButton.addEventListener('click', () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  downloadButton.href = canvas.toDataURL('image/png');
+  setCustomExportScale();
 });
+
+scaleSelector.addEventListener('change', (e) => {
+  customScale = +e.target.value;
+  setCustomExportScale();
+});
+
+/**
+ * It will generate a virtual canvas to update download image size. Works for any scale.
+ * This will use 'customScale' value as reference.
+ * 
+ * TODO(?): Maybe receive it as a parameter instead of using customScale?
+ */
+function setCustomExportScale() {
+  const virtualCanvas = document.createElement('canvas');
+  const virtualContext = virtualCanvas.getContext('2d');
+
+  virtualCanvas.width = canvasSize * customScale;
+  virtualCanvas.height = canvasSize * customScale;
+
+  for (let i = 0; i < scale; i++) {
+    for (let j = 0; j < scale; j++) {
+      const [r, g, b, a] = ctx.getImageData(i * zoom, j * zoom, 1, 1).data;
+
+      virtualContext.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+      virtualContext.fillRect(i * customScale, j * customScale, customScale, customScale); 
+    }
+  }
+
+  downloadButton.href = virtualCanvas.toDataURL('image/png'); 
+}
