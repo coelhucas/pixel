@@ -1,9 +1,16 @@
 const tile_size = 8;
 const zoom = 64;
 const canvas = document.getElementById('canvas');
+const downloadButton = document.getElementById('download');
 const ctx = canvas.getContext('2d');
 
 let isDrawing = false;
+
+ctx.imageSmoothingEnabled = false;
+  ctx.mozImageSmoothingEnabled = false;
+  ctx.webkitImageSmoothingEnabled = false;
+  ctx.msImageSmoothingEnabled = false;
+
 
 ctx.scale(8, 8);
 
@@ -26,6 +33,8 @@ function draw(e, requiresHold = false) {
 
   ctx.fillStyle = '#000';
   ctx.fillRect(x * tile_size, y * tile_size, tile_size, tile_size);
+  downloadButton.href = canvas.toDataURL('image/png');
+
 }
 
 canvas.addEventListener('mousedown', () => {
