@@ -18,3 +18,9 @@ Click and drag to draw
 <kbd>F5</kbd> to reset on windows/linux
 
 Press download to download your pixel art as png
+
+## TODO
+- [ ] Add a small default palette
+- [ ] Make it responsive
+- [ ] Add eraser
+- [ ] Add reset button
