@@ -29,5 +29,6 @@ Press download to download your pixel art as png
 - [x] Make it possible to download it in other scales
 - [ ] 1x previewer (I can use the virtual canvas)
 - [x] Bucket [reference](http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/)
+  - [ ] (Extra?) Move floodfill recursion to data structure
 
 *Maybe other sizes layer?
