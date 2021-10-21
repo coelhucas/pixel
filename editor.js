@@ -16,7 +16,7 @@ const tools = {
 
 let isDrawing = false;
 let currentTool = tools.pen;
-let customScale = scale;
+let customScale = scaleSelector.value;
 
 ctx.scale(scale, scale);
 setCustomExportScale();
@@ -34,8 +34,8 @@ function positionToCoordinates(event) {
 
 function coordinatesToPosition(x, y) {
   return [
-    x * customScale,
-    y * customScale,
+    x * scale,
+    y * scale,
    ];
 }
 
@@ -94,6 +94,8 @@ function isSameColor(color1, color2) {
 /**
  * Recursively fills remaining area by flood filling.
  * 
+ * This doesn't seem to perform well. Needs more investigation and see if it can be improved.
+ * 
  * @param {number} x - x coordinate
  * @param {number} y - y coordinate
  * @param {Uint8ClampedArray} initialColor - RGBA array, such as [0, 0, 0, 255]
@@ -110,10 +112,11 @@ function fill(x, y, initialColor, newColor) {
   const [r, g, b, a] = newColor;
   ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
   ctx.fillRect(xPos, yPos, scale, scale);
-  setCustomExportScale();
-
-  getNeighbors(x, y, initialColor).forEach(([nX, nY]) => {
-    fill(nX, nY, initialColor, newColor);
+  
+  
+  getNeighbors(x, y, initialColor)
+    .forEach(([nX, nY]) => {
+      fill(nX, nY, initialColor, newColor);
   });
 };
 
