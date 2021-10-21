@@ -44,7 +44,6 @@ function coordinatesToPosition(x, y) {
    ];
 }
 
-
 /**
  * Draw a pixel onto canvas
  * 
@@ -97,6 +96,20 @@ function isSameColor(color1, color2) {
   return r1 === r2 && g1 === g2 && b1 === b2 && a1 === a2;
 }
 
+function hexToRgbA(hex){
+  let c;
+  if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+      c= hex.substring(1).split('');
+      if(c.length== 3){
+          c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+      }
+      c= '0x'+c.join('');
+      return [(c>>16)&255, (c>>8)&255, c&255, 255];
+  }
+  
+return [0, 0, 0, 255]
+}
+
 /**
  * Recursively fills remaining area by flood filling.
  * 
@@ -133,7 +146,7 @@ function getColorFromPicker(e){
 function startFilling(e) {
   const [xCoords, yCoords] = positionToCoordinates(e);
   const initialColor = ctx.getImageData(xCoords * zoom, yCoords * zoom, 1, 1).data;
-  fill(xCoords, yCoords, initialColor, new Uint8ClampedArray([0, 0, 0, 255]));
+  fill(xCoords, yCoords, initialColor, new Uint8ClampedArray(hexToRgbA(currentColor)))
 }
 
 canvas.addEventListener('mousedown', () => {
