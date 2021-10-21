@@ -7,13 +7,19 @@
 <body>
   <section>
     <button id="reset">Reset</button>
-    <canvas id="canvas" class="canvas" width="512" height="512"></canvas>
-    <a id="download" download="pixel">Download</a>
-    <label for="scale-select">Export scale size:</label>
-    <select name="scales" id="scale-select">
-      <option value="1">1x (8x8)</option>
-      <option value="2">2x (16x16)</option>
-      <option value="64" selected>64x (512x512)</option>
+    <div class="editor-container">
+      <aside class="editor-tools">
+        <button id="button-pen">✏️</button>
+        <button id="button-bucket">🪣 </button>
+      </aside>
+      <canvas id="canvas" class="canvas" width="512" height="512"></canvas>
+    </div>
+      <a id="download" download="pixel">Download</a>
+      <label for="scale-select">Export scale size:</label>
+      <select name="scales" id="scale-select">
+        <option value="1">1x (8x8)</option>
+        <option value="2">2x (16x16)</option>
+        <option value="64" selected>64x (512x512)</option>
     </select>
   </section>
   <script src="editor.js"></script>
