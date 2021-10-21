@@ -4,14 +4,40 @@ const zoom = 64;
 const canvas = document.getElementById('canvas');
 const downloadButton = document.getElementById('download');
 const resetButton = document.getElementById('reset');
+const buttonPen = document.getElementById('button-pen');
+const buttonBucket = document.getElementById('button-bucket');
 const scaleSelector = document.getElementById('scale-select');
 const ctx = canvas.getContext('2d');
+const tools = {
+  pen: 'pen',
+  eraser: 'eraser',
+  bucket: 'bucket',
+};
 
 let isDrawing = false;
+let currentTool = tools.pen;
 let customScale = scale;
 
 ctx.scale(scale, scale);
 setCustomExportScale();
+
+function positionToCoordinates(event) {
+  const { clientX, clientY } = event;
+  const rect = canvas.getBoundingClientRect();
+
+  return [
+    Math.floor((clientX - rect.left) / zoom),
+    Math.floor((clientY - rect.top) / zoom),
+  ]
+
+}
+
+function coordinatesToPosition(x, y) {
+  return [
+    x * customScale,
+    y * customScale,
+   ];
+}
 
 /**
  * Draw a pixel onto canvas
@@ -21,18 +47,80 @@ setCustomExportScale();
  */
 function draw(e, requiresHold = false) {
   if (!isDrawing && requiresHold) {
-  return;
+    return;
   }
-  const rect = canvas.getBoundingClientRect();
-  const [x, y] = [
-    Math.floor((e.clientX - rect.left) / zoom),
-    Math.floor((e.clientY - rect.top) / zoom),
-  ];
 
+  const [xCoords, yCoords] = positionToCoordinates(e);
+  const [x, y] = coordinatesToPosition(xCoords, yCoords);
+ 
   ctx.fillStyle = '#000';
-  ctx.fillRect(x * scale, y * scale, scale, scale);
+  ctx.fillRect(x, y, scale, scale);
   setCustomExportScale();
 
+}
+
+/**
+ * Returns neighbors coordinates filtered within canvas boundaries
+ * and having the same initial color as the initial pixel.
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ * @param {Uint8ClampedArray} initialColor - RGBA array such as [0, 0, 0, 255]
+ * @returns 
+ */
+function getNeighbors(x, y, initialColor) {
+  const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+  return directions
+    .map(([dirX, dirY]) => {
+      const [nX, nY] = [dirX + x, dirY + y];
+      return [nX, nY];
+    })
+    .filter(([nX, nY]) => {
+      const [r, g, b, a] = ctx.getImageData(nX * zoom, nY * zoom, 1, 1).data;
+      return r === initialColor[0] && g === initialColor[1] && b === initialColor[2] && a === initialColor[3];  
+    })
+    .filter(([nX, nY]) => {
+      return nX >= 0 && nX < 8 && nY >= 0 && nY < 8;
+    });
+}
+
+function isSameColor(color1, color2) {
+  const [r1, g1, b1, a1] = color1;
+  const [r2, g2, b2, a2] = color2;
+
+  return r1 === r2 && g1 === g2 && b1 === b2 && a1 === a2;
+}
+
+/**
+ * Recursively fills remaining area by flood filling.
+ * 
+ * @param {number} x - x coordinate
+ * @param {number} y - y coordinate
+ * @param {Uint8ClampedArray} initialColor - RGBA array, such as [0, 0, 0, 255]
+ * @param {Uint8ClampedArray} newColor - RGBA array, such as [255, 255, 255, 255]
+ * @returns 
+ */
+function fill(x, y, initialColor, newColor) {
+  if (isSameColor(newColor, initialColor)) {
+    return;
+  }
+
+  const [xPos, yPos] = coordinatesToPosition(x, y);
+
+  const [r, g, b, a] = newColor;
+  ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+  ctx.fillRect(xPos, yPos, scale, scale);
+  setCustomExportScale();
+
+  getNeighbors(x, y, initialColor).forEach(([nX, nY]) => {
+    fill(nX, nY, initialColor, newColor);
+  });
+};
+
+function startFilling(e) {
+  const [xCoords, yCoords] = positionToCoordinates(e);
+  const initialColor = ctx.getImageData(xCoords * zoom, yCoords * zoom, 1, 1).data;
+  fill(xCoords, yCoords, initialColor, new Uint8ClampedArray([0, 0, 0, 255]));
 }
 
 canvas.addEventListener('mousedown', () => {
@@ -43,8 +131,28 @@ canvas.addEventListener('mouseup', () => {
   isDrawing = false;
 })
 
-canvas.addEventListener('click', draw);
-canvas.addEventListener('mousemove', (e) => draw(e, true));
+canvas.addEventListener('click', (e) => {
+  switch (currentTool) {
+    case tools.pen:
+      draw(e);
+      break;
+    case tools.bucket:
+      startFilling(e);
+      break;
+    default:
+      console.warn('unkown tool');
+      break;
+  }
+});
+
+canvas.addEventListener('mousemove', (e) => {
+  switch (currentTool) {
+    case tools.pen:
+      draw(e, true);
+    default:
+      break;
+  }
+});
 
 resetButton.addEventListener('click', () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -54,6 +162,14 @@ resetButton.addEventListener('click', () => {
 scaleSelector.addEventListener('change', (e) => {
   customScale = +e.target.value;
   setCustomExportScale();
+});
+
+buttonPen.addEventListener('click', () => {
+  currentTool = tools.pen;
+});
+
+buttonBucket.addEventListener('click', () => {
+  currentTool = tools.bucket;
 });
 
 /**
