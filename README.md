@@ -1,5 +1,7 @@
 # Pixel
-![image](https://user-images.githubusercontent.com/28108272/138012642-4d242127-aa56-4949-a1db-2e905ca5c4a6.png)
+![image](https://user-images.githubusercontent.com/28108272/138191631-0a688635-b693-4c47-b75c-f7881a145bce.png)
+
+[First version](https://user-images.githubusercontent.com/28108272/138012642-4d242127-aa56-4949-a1db-2e905ca5c4a6.png)
 
 Pixel is a tiny editor meant to be used within a tiny game creation tool I'm planning. At its current state you can only create 8x8 stuff with black pixels and download it.
 
