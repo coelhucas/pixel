@@ -21,7 +21,7 @@ const tools = {
 let isDrawing = false;
 let currentTool = tools.pen;
 let customScale = scaleSelector.value;
-let currentColor = "#000"
+let currentColor = '#000'
 
 ctx.scale(scale, scale);
 setCustomExportScale();
@@ -96,18 +96,31 @@ function isSameColor(color1, color2) {
   return r1 === r2 && g1 === g2 && b1 === b2 && a1 === a2;
 }
 
-function hexToRgbA(hex){
-  let c;
-  if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
-      c= hex.substring(1).split('');
-      if(c.length== 3){
-          c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-      }
-      c= '0x'+c.join('');
-      return [(c>>16)&255, (c>>8)&255, c&255, 255];
-  }
+// function hexToRgbA(hex){
+//   let c;
+//   if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+//       c= hex.substring(1).split('');
+//       if(c.length== 3){
+//           c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+//       }
+//       c= '0x'+c.join('');
+//       return [(c>>16)&255, (c>>8)&255, c&255, 255];
+//   }
   
-return [0, 0, 0, 255]
+//   return [0, 0, 0, 255]
+// }
+
+function hexToRgbA(hex){
+  const isShorterHex = hex.length <= 4;
+  const matchHex = isShorterHex ? /.{1, 1}/g : /.{1, 2}/g
+  const spreadColor = value => parseInt(isShorterHex ? `${value}${value}` : value, 16)
+  return [
+    ...hex
+      .replace('#', '')
+      .match(matchHex)
+      .map(spreadColor),
+      255
+  ]
 }
 
 /**
