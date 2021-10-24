@@ -187,7 +187,7 @@ resetButton.addEventListener('click', () => {
   setCustomExportScale();
 });
 
-colorPicker.addEventListener('change', getColorFromPicker)
+colorPicker.addEventListener('input', getColorFromPicker);
 
 scaleSelector.addEventListener('change', (e) => {
   customScale = +e.target.value;
