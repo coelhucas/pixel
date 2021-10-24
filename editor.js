@@ -19,7 +19,7 @@ const tools = {
 };
 
 let isDrawing = false;
-let currentColor = '#000'
+let currentColor = colorPicker.value;
 let currentTool = tools.pen;
 let customScale = scaleSelector.value;
 
@@ -96,10 +96,11 @@ function isSameColor(color1, color2) {
   return r1 === r2 && g1 === g2 && b1 === b2 && a1 === a2;
 }
 
-function hexToRgbA(hex){
+function hexToRGBA(hex) {
   const isShorterHex = hex.length <= 4;
-  const matchHex = isShorterHex ? /.{1, 1}/g : /.{1, 2}/g
-  const spreadColor = value => parseInt(isShorterHex ? `${value}${value}` : value, 16)
+  const matchHex = isShorterHex ? /.{1,1}/g : /.{1,2}/g
+  const spreadColor = value => parseInt(isShorterHex ? `${value}${value}` : value, 16);
+  
   return [
     ...hex
       .replace('#', '')
@@ -121,7 +122,7 @@ function hexToRgbA(hex){
  * @returns 
  */
 function fill(x, y, initialColor) {
-  const newColor = new Uint8ClampedArray(currentColor);
+  const newColor = new Uint8ClampedArray(hexToRGBA(currentColor));
 
   if (isSameColor(newColor, initialColor)) {
     return;
