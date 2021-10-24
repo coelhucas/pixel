@@ -19,7 +19,7 @@ const tools = {
 };
 
 let isDrawing = false;
-let currentColor = '#000'
+let currentColor = colorPicker.value;
 let currentTool = tools.pen;
 let customScale = scaleSelector.value;
 
@@ -96,10 +96,11 @@ function isSameColor(color1, color2) {
   return r1 === r2 && g1 === g2 && b1 === b2 && a1 === a2;
 }
 
-function hexToRgbA(hex){
+function hexToRGBA(hex) {
   const isShorterHex = hex.length <= 4;
-  const matchHex = isShorterHex ? /.{1, 1}/g : /.{1, 2}/g
-  const spreadColor = value => parseInt(isShorterHex ? `${value}${value}` : value, 16)
+  const matchHex = isShorterHex ? /.{1,1}/g : /.{1,2}/g
+  const spreadColor = value => parseInt(isShorterHex ? `${value}${value}` : value, 16);
+  
   return [
     ...hex
       .replace('#', '')
@@ -120,7 +121,9 @@ function hexToRgbA(hex){
  * @param {Uint8ClampedArray} newColor - RGBA array, such as [255, 255, 255, 255]
  * @returns 
  */
-function fill(x, y, initialColor, newColor) {
+function fill(x, y, initialColor) {
+  const newColor = new Uint8ClampedArray(hexToRGBA(currentColor));
+
   if (isSameColor(newColor, initialColor)) {
     return;
   }
@@ -139,13 +142,13 @@ function fill(x, y, initialColor, newColor) {
 };
 
 function getColorFromPicker(e){
-  currentColor = e.target.value
+  currentColor = e.target.value;
 }
 
 function startFilling(e) {
   const [xCoords, yCoords] = positionToCoordinates(e);
   const initialColor = ctx.getImageData(xCoords * zoom, yCoords * zoom, 1, 1).data;
-  fill(xCoords, yCoords, initialColor, new Uint8ClampedArray(hexToRgbA(currentColor)))
+  fill(xCoords, yCoords, initialColor);
 }
 
 canvas.addEventListener('mousedown', () => {
@@ -184,7 +187,7 @@ resetButton.addEventListener('click', () => {
   setCustomExportScale();
 });
 
-colorPicker.addEventListener('change', getColorFromPicker)
+colorPicker.addEventListener('input', getColorFromPicker);
 
 scaleSelector.addEventListener('change', (e) => {
   customScale = +e.target.value;

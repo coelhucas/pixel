@@ -26,7 +26,7 @@ a {
   margin-right: 8px;
 }
 
-.editor-tools > button {
+.editor-tools > button, .editor-tools > input {
   width: 64px;
   height: 64px;
 }
