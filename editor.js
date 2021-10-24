@@ -120,7 +120,9 @@ function hexToRgbA(hex){
  * @param {Uint8ClampedArray} newColor - RGBA array, such as [255, 255, 255, 255]
  * @returns 
  */
-function fill(x, y, initialColor, newColor) {
+function fill(x, y, initialColor) {
+  const newColor = new Uint8ClampedArray(currentColor);
+
   if (isSameColor(newColor, initialColor)) {
     return;
   }
@@ -139,13 +141,13 @@ function fill(x, y, initialColor, newColor) {
 };
 
 function getColorFromPicker(e){
-  currentColor = e.target.value
+  currentColor = e.target.value;
 }
 
 function startFilling(e) {
   const [xCoords, yCoords] = positionToCoordinates(e);
   const initialColor = ctx.getImageData(xCoords * zoom, yCoords * zoom, 1, 1).data;
-  fill(xCoords, yCoords, initialColor, new Uint8ClampedArray(hexToRgbA(currentColor)))
+  fill(xCoords, yCoords, initialColor);
 }
 
 canvas.addEventListener('mousedown', () => {
