@@ -96,6 +96,13 @@ function isSameColor(color1, color2) {
   return r1 === r2 && g1 === g2 && b1 === b2 && a1 === a2;
 }
 
+/**
+ * Compose RGBA array from hexadecimal string.
+ * 
+ * @param {String} hex - string such as '#FFF' or '#FFFFFF'
+ * @returns {Array} rgba where indexes are ordered by red green blue and alpha (later always being 255) e.g.: 
+ * `hexToRGBA('#FF0000')` // -> [255, 0, 0, 255] (red)
+ */
 function hexToRGBA(hex) {
   const isShorterHex = hex.length <= 4;
   const matchHex = isShorterHex ? /.{1,1}/g : /.{1,2}/g
