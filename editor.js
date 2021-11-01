@@ -105,7 +105,7 @@ function isSameColor(color1, color2) {
  */
 function hexToRGBA(hex) {
   const isShorterHex = hex.length <= 4;
-  const matchHex = isShorterHex ? /.{1,1}/g : /.{1,2}/g
+  const matchHex = isShorterHex ? /.{1}/g : /.{1,2}/g
   const spreadColor = value => parseInt(isShorterHex ? `${value}${value}` : value, 16);
   
   return [
