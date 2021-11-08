@@ -46,7 +46,7 @@ function coordinatesToPosition(x, y) {
 
 /**
  * Draw a pixel onto canvas
- * 
+ *
  * @param {Event} e - event triggered when clicking on the canvas or moving mouse while holding LMB
  * @param {*} requiresHold - if true, the mouse must be held down to draw
  */
@@ -54,24 +54,24 @@ function draw(e, requiresHold = false) {
   if (!isDrawing && requiresHold) {
     return;
   }
-  
+
   const [xCoords, yCoords] = positionToCoordinates(e);
   const [x, y] = coordinatesToPosition(xCoords, yCoords);
-  
+
   ctx.fillStyle = currentColor;
   ctx.fillRect(x, y, scale, scale);
   setCustomExportScale();
-  
+
 }
 
 /**
  * Returns neighbors coordinates filtered within canvas boundaries
  * and having the same initial color as the initial pixel.
- * 
- * @param {number} x 
- * @param {number} y 
+ *
+ * @param {number} x
+ * @param {number} y
  * @param {Uint8ClampedArray} initialColor - RGBA array such as [0, 0, 0, 255]
- * @returns 
+ * @returns
  */
 function getNeighbors(x, y, initialColor) {
   const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
@@ -82,7 +82,7 @@ function getNeighbors(x, y, initialColor) {
   })
   .filter(([nX, nY]) => {
     const [r, g, b, a] = ctx.getImageData(nX * zoom, nY * zoom, 1, 1).data;
-    return r === initialColor[0] && g === initialColor[1] && b === initialColor[2] && a === initialColor[3];  
+    return r === initialColor[0] && g === initialColor[1] && b === initialColor[2] && a === initialColor[3];
   })
   .filter(([nX, nY]) => {
     return nX >= 0 && nX < 8 && nY >= 0 && nY < 8;
@@ -92,22 +92,22 @@ function getNeighbors(x, y, initialColor) {
 function isSameColor(color1, color2) {
   const [r1, g1, b1, a1] = color1;
   const [r2, g2, b2, a2] = color2;
-  
+
   return r1 === r2 && g1 === g2 && b1 === b2 && a1 === a2;
 }
 
 /**
  * Compose RGBA array from hexadecimal string.
- * 
+ *
  * @param {String} hex - string such as '#FFF' or '#FFFFFF'
- * @returns {Array} rgba where indexes are ordered by red green blue and alpha (later always being 255) e.g.: 
+ * @returns {Array} rgba where indexes are ordered by red green blue and alpha (later always being 255) e.g.:
  * `hexToRGBA('#FF0000')` // -> [255, 0, 0, 255] (red)
  */
 function hexToRGBA(hex) {
   const isShorterHex = hex.length <= 4;
   const matchHex = isShorterHex ? /.{1}/g : /.{1,2}/g
   const spreadColor = value => parseInt(isShorterHex ? `${value}${value}` : value, 16);
-  
+
   return [
     ...hex
       .replace('#', '')
@@ -119,14 +119,14 @@ function hexToRGBA(hex) {
 
 /**
  * Recursively fills remaining area by flood filling.
- * 
+ *
  * This doesn't seem to perform well. Needs more investigation and see if it can be improved.
- * 
+ *
  * @param {number} x - x coordinate
  * @param {number} y - y coordinate
  * @param {Uint8ClampedArray} initialColor - RGBA array, such as [0, 0, 0, 255]
  * @param {Uint8ClampedArray} newColor - RGBA array, such as [255, 255, 255, 255]
- * @returns 
+ * @returns
  */
 function fill(x, y, initialColor) {
   const newColor = new Uint8ClampedArray(hexToRGBA(currentColor));
@@ -134,14 +134,14 @@ function fill(x, y, initialColor) {
   if (isSameColor(newColor, initialColor)) {
     return;
   }
-  
+
   const [xPos, yPos] = coordinatesToPosition(x, y);
-  
+
   const [r, g, b, a] = newColor;
   ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
   ctx.fillRect(xPos, yPos, scale, scale);
-  
-  
+
+
   getNeighbors(x, y, initialColor)
   .forEach(([nX, nY]) => {
     fill(nX, nY, initialColor, newColor);
@@ -175,7 +175,7 @@ canvas.addEventListener('click', (e) => {
       startFilling(e);
       break;
     default:
-      console.warn('unkown tool');
+      console.warn('unknown tool');
       break;
   }
 });
@@ -212,9 +212,9 @@ buttonBucket.addEventListener('click', () => {
 /**
  * It will generate a virtual canvas to update download image size. Works for any scale.
  * This will use 'customScale' value as reference.
- * 
+ *
  * Won't use [OffscreenCanvas](https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas) due to lack of support.
- * 
+ *
  * **TODO(?):** Maybe receive it as a parameter instead of using customScale?
  */
 function setCustomExportScale() {
@@ -229,9 +229,9 @@ function setCustomExportScale() {
       const [r, g, b, a] = ctx.getImageData(x * zoom, y * zoom, 1, 1).data;
 
       virtualContext.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
-      virtualContext.fillRect(x * customScale, y * customScale, customScale, customScale); 
+      virtualContext.fillRect(x * customScale, y * customScale, customScale, customScale);
     }
   }
 
-  downloadButton.href = virtualCanvas.toDataURL('image/png'); 
+  downloadButton.href = virtualCanvas.toDataURL('image/png');
 }
