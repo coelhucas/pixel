@@ -7,8 +7,10 @@ const downloadButton = document.getElementById('download');
 const resetButton = document.getElementById('reset');
 const buttonPen = document.getElementById('button-pen');
 const buttonBucket = document.getElementById('button-bucket');
-const colorPicker = document.getElementById('color-picker')
+const colorPickerTop = document.getElementById('color-picker-top');
+const colorPickerBottom = document.getElementById('color-picker-bottom');
 const scaleSelector = document.getElementById('scale-select');
+const switchButton = document.getElementById('switch-trigger');
 
 const ctx = canvas.getContext('2d');
 
@@ -19,7 +21,8 @@ const tools = {
 };
 
 let isDrawing = false;
-let currentColor = colorPicker.value;
+let isErasing = false;
+let currentColor = colorPickerTop.value;
 let currentTool = tools.pen;
 let customScale = scaleSelector.value;
 
@@ -61,7 +64,18 @@ function draw(e, requiresHold = false) {
   ctx.fillStyle = currentColor;
   ctx.fillRect(x, y, scale, scale);
   setCustomExportScale();
+}
 
+function erase(e, requiresHold = false) {
+  if (!isErasing && requiresHold) {
+    return;
+  }
+
+  const [xCoords, yCoords] = positionToCoordinates(e);
+  const [x, y] = coordinatesToPosition(xCoords, yCoords);
+
+  ctx.clearRect(x, y, scale, scale);
+  setCustomExportScale();
 }
 
 /**
@@ -148,7 +162,14 @@ function fill(x, y, initialColor) {
   });
 };
 
-function getColorFromPicker(e){
+function switchPickerColors() {
+  const tmpColor = colorPickerTop.value;
+  colorPickerTop.value = colorPickerBottom.value;
+  colorPickerBottom.value = tmpColor;
+  currentColor = colorPickerTop.value;
+}
+
+function getColorFromPicker(e) {
   currentColor = e.target.value;
 }
 
@@ -158,22 +179,31 @@ function startFilling(e) {
   fill(xCoords, yCoords, initialColor);
 }
 
-canvas.addEventListener('mousedown', () => {
-  isDrawing = true;
+canvas.addEventListener('mousedown', (e) => {
+  isDrawing = e.button === 0;
+  isErasing = e.button === 2;
 });
 
 canvas.addEventListener('mouseup', () => {
   isDrawing = false;
+  isErasing = false;
 })
+
+canvas.addEventListener('contextmenu', function(e) {
+  e.preventDefault();
+  erase(e);
+});
 
 canvas.addEventListener('click', (e) => {
   switch (currentTool) {
     case tools.pen:
       draw(e);
       break;
+
     case tools.bucket:
       startFilling(e);
       break;
+
     default:
       console.warn('unknown tool');
       break;
@@ -183,7 +213,12 @@ canvas.addEventListener('click', (e) => {
 canvas.addEventListener('mousemove', (e) => {
   switch (currentTool) {
     case tools.pen:
-      draw(e, true);
+      if (isErasing) {
+        erase(e, true);
+      } else {
+        draw(e, true);
+      }
+
     default:
       break;
   }
@@ -194,7 +229,12 @@ resetButton.addEventListener('click', () => {
   setCustomExportScale();
 });
 
-colorPicker.addEventListener('input', getColorFromPicker);
+colorPickerTop.addEventListener('input', getColorFromPicker);
+colorPickerBottom.addEventListener('input', getColorFromPicker);
+
+switchButton.addEventListener('click', () => {
+  switchPickerColors();
+});
 
 scaleSelector.addEventListener('change', (e) => {
   customScale = +e.target.value;
@@ -207,6 +247,12 @@ buttonPen.addEventListener('click', () => {
 
 buttonBucket.addEventListener('click', () => {
   currentTool = tools.bucket;
+});
+
+document.addEventListener('keyup', (e) => {
+  if (e.key.toLowerCase() === "s") {
+    switchPickerColors();
+  }
 });
 
 /**

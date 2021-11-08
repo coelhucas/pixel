@@ -44,3 +44,7 @@ a {
   flex-direction: column;
   align-items: center;
 }
+
+.editor-switch-color {
+  cursor: pointer;
+}
