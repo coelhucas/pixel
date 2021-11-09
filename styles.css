@@ -1,3 +1,7 @@
+* {
+  font-family: 'Press Start 2P', monospace;
+}
+
 section {
   display: flex;
   flex-direction: column;
@@ -39,4 +43,8 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.editor-switch-color {
+  cursor: pointer;
 }
