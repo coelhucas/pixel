@@ -1,7 +1,6 @@
 const canvasSize = 8;
 const scale = 8;
 const zoom = 64;
-const canvasSizeInPixels = canvasSize * zoom;
 
 const canvas = document.getElementById('canvas');
 const bgCanvas = document.getElementById('canvas-background');
