@@ -1,5 +1,6 @@
 * {
   font-family: 'Press Start 2P', monospace;
+  box-sizing: border-box;
 }
 
 section {
@@ -30,13 +31,23 @@ a {
   margin-right: 8px;
 }
 
+.canvas-container {
+  position: relative;
+}
+
 .editor-tools > button, .editor-tools > input {
   width: 64px;
   height: 64px;
 }
 
+.canvas-background {
+  position: absolute;
+  pointer-events: none;
+}
+
 .canvas {
-  border: 1px solid;
+  z-index: 1;
+  position: relative;
 }
 
 .editor-tools aside {

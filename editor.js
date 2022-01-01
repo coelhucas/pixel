@@ -1,8 +1,10 @@
 const canvasSize = 8;
 const scale = 8;
 const zoom = 64;
+const canvasSizeInPixels = canvasSize * zoom;
 
 const canvas = document.getElementById('canvas');
+const bgCanvas = document.getElementById('canvas-background');
 const downloadButton = document.getElementById('download');
 const resetButton = document.getElementById('reset');
 const buttonPen = document.getElementById('button-pen');
@@ -13,6 +15,7 @@ const scaleSelector = document.getElementById('scale-select');
 const switchButton = document.getElementById('switch-trigger');
 
 const ctx = canvas.getContext('2d');
+const bgCtx = bgCanvas.getContext('2d');
 
 const tools = {
   pen: 'pen',
@@ -28,6 +31,21 @@ let customScale = scaleSelector.value;
 
 ctx.scale(scale, scale);
 setCustomExportScale();
+
+
+// Checked background
+const squareSize = zoom / 2;
+for (let i = 0; i < canvasSize * 2; i++) {
+  for (let j = 0; j < canvasSize * 2; j++) {
+    if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
+      bgCtx.fillStyle = 'rgba(0, 0, 0, 0.6)'
+      bgCtx.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
+    } else {
+      bgCtx.fillStyle = 'rgba(0, 0, 0, 0.3)'
+      bgCtx.fillRect(i * squareSize, j * squareSize, squareSize, squareSize);
+    };
+  }
+}
 
 function positionToCoordinates(event) {
   const { clientX, clientY } = event;
